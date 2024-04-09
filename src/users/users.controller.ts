@@ -1,7 +1,9 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto } from './dto';
-import { JwtAuthGuard } from 'src/auth/guard';
+import { JwtAuthGuard, RolesGuard } from 'src/auth/guard';
+import { Roles } from 'src/auth/decorator';
+import { UserRole } from 'src/shared/enums';
 
 @Controller('users')
 export class UsersController {
@@ -13,7 +15,8 @@ export class UsersController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
   findAll() {
     return this.usersService.findAll();
   }
