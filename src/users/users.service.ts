@@ -30,7 +30,7 @@ export class UsersService {
   }
 
   findAll() {
-    return `This action returns all users`;
+    return this.userRepository.find();
   }
 
   async findOne(data: Partial<User>): Promise<User> {
