@@ -6,6 +6,7 @@ import { UserRole } from 'src/shared/enums';
 import { CreateUserDto } from 'src/users/dto';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
+import { PayloadType } from './types';
 
 @Injectable()
 export class AuthService {
@@ -35,7 +36,7 @@ export class AuthService {
       user.password
     );
     if (passwordMatched) {
-      const payload = { userId: user.userId, email: user.email, role: user.role};
+      const payload: PayloadType = { userId: user.userId, email: user.email, role: user.role};
 
       return {
         accessToken: this.jwtService.sign(payload),
