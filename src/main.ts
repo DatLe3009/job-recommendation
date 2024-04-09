@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,9 +13,10 @@ async function bootstrap() {
   }));
   app.enableCors({
     credentials: true,
-    // origin: process.env.FRONTEND_URL,
+    origin: true,
   });
-  await app.listen(3000);
+  const configService = app.get(ConfigService);
+  await app.listen(configService.get<number>('PORT'));
 
 }
 bootstrap();

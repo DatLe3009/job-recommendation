@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
+import { LoginDTO } from 'src/auth/dto';
 
 @Injectable()
 export class UsersService {
@@ -12,12 +13,16 @@ export class UsersService {
     private userRepository: Repository<User>,
   ) {}
 
-  async findOne(data: Partial<User>): Promise<User> {
+  async findOne(data: LoginDTO): Promise<User> {
     const user = await this.userRepository.findOneBy({ email: data.email});
     if (!user) {
       throw new UnauthorizedException('Cound not find user');
     }
     return user;
+  }
+
+  async findById(id: number): Promise<User> {
+    return this.userRepository.findOneBy({ userId: id });
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -42,12 +47,7 @@ export class UsersService {
   }
 
   update(id: number, updateUserDto: UpdateUserDto): Promise<UpdateResult> {
-    return this.userRepository
-      .createQueryBuilder()
-      .update()
-      .set(updateUserDto)
-      .where("userId = :id", { id })
-      .execute();
+    return this.userRepository.update(id, updateUserDto);
   }
 
   remove(id: number): Promise<DeleteResult> {

@@ -8,7 +8,7 @@ export class UpdateUserDto {
     
     @IsDateString()
     @IsOptional()
-    dob?: string;
+    dob?: Date;
 
     @IsString()
     @IsOptional()
