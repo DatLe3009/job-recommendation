@@ -1,6 +1,7 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Sex, UserRole } from "src/shared/enums";
 import { Exclude } from "class-transformer";
+import { Employee } from "src/employees/entities";
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -50,4 +51,8 @@ export class User extends BaseEntity {
 
     @UpdateDateColumn()
     updatedDate: Date
+
+    @OneToOne(() => Employee,
+        (employee) => employee.user)
+    employer: Employee
 }
