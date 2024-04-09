@@ -5,11 +5,13 @@ import { User } from 'src/users/entities';
 import { UserRole } from 'src/shared/enums';
 import { CreateUserDto } from 'src/users/dto';
 import * as bcrypt from 'bcryptjs';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UsersService,
+    private jwtService: JwtService,
   ) {}
   async signup(signupDTO: SignupDTO): Promise<User> {
     const { password, confirmPassword, role } =  signupDTO;
@@ -26,15 +28,18 @@ export class AuthService {
     return this.userService.create(createUserDto);
   }
 
-  async login( loginDTO: LoginDTO): Promise<User> {
+  async login( loginDTO: LoginDTO): Promise<{ accessToken: string }> {
     const user = await this.userService.findOne(loginDTO); // 1.
     const passwordMatched = await bcrypt.compare(
       loginDTO.password,
       user.password
     );
     if (passwordMatched) {
-      delete user.password;
-      return user;
+      const payload = { userId: user.userId, email: user.email, role: user.role};
+
+      return {
+        accessToken: this.jwtService.sign(payload),
+      };
     } else {
       throw new UnauthorizedException("Password does not match");
     }
