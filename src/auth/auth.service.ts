@@ -1,14 +1,15 @@
-import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { LoginDTO, SignupDTO } from './dto';
 import { User } from 'src/users/entities';
 import { UserRole } from 'src/shared/enums';
 import { CreateUserDto } from 'src/users/dto';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
+    private userService: UsersService,
   ) {}
   async signup(signupDTO: SignupDTO): Promise<User> {
     const { password, confirmPassword, role } =  signupDTO;
@@ -22,10 +23,20 @@ export class AuthService {
 
     delete signupDTO.confirmPassword;
     const createUserDto: CreateUserDto = signupDTO;
-    return this.usersService.create(createUserDto);
+    return this.userService.create(createUserDto);
   }
 
-  login( loginDTO: LoginDTO) {
-    return loginDTO;
+  async login( loginDTO: LoginDTO): Promise<User> {
+    const user = await this.userService.findOne(loginDTO); // 1.
+    const passwordMatched = await bcrypt.compare(
+      loginDTO.password,
+      user.password
+    );
+    if (passwordMatched) {
+      delete user.password;
+      return user;
+    } else {
+      throw new UnauthorizedException("Password does not match");
+    }
   }
 }

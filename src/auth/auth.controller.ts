@@ -17,7 +17,7 @@ export class AuthController {
   @Post('login')
   login(
     @Body() loginDTO: LoginDTO,
-  ) {
+  ): Promise<User> {
     return this.authService.login(loginDTO);
   }
 }

@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from './dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities';
@@ -33,8 +33,12 @@ export class UsersService {
     return `This action returns all users`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(data: Partial<User>): Promise<User> {
+    const user = await this.userRepository.findOneBy({ email: data.email});
+    if (!user) {
+      throw new UnauthorizedException('Cound not find user');
+    }
+    return user;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
