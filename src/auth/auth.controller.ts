@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDTO, SignupDTO } from './dto';
 import { User } from 'src/users/entities';
-
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -17,7 +17,14 @@ export class AuthController {
   @Post('login')
   login(
     @Body() loginDTO: LoginDTO,
-  ): Promise<{ accessToken: string }> {
-    return this.authService.login(loginDTO);
+    @Res() res: Response
+  ) {
+    return this.authService.login(loginDTO, res);
+  }
+
+  @Get('logout')
+  logout(@Res() res: Response) {
+    res.clearCookie('jwt', { httpOnly: true, sameSite: 'none', secure: true });
+    res.sendStatus(204);
   }
 }

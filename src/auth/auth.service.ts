@@ -7,6 +7,7 @@ import { CreateUserDto } from 'src/users/dto';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { PayloadType } from './types';
+import { CookieOptions, Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -29,7 +30,10 @@ export class AuthService {
     return this.userService.create(createUserDto);
   }
 
-  async login( loginDTO: LoginDTO): Promise<{ accessToken: string }> {
+  async login( 
+    loginDTO: LoginDTO,
+    res: Response
+  ) {
     const user = await this.userService.findOne(loginDTO); // 1.
     const passwordMatched = await bcrypt.compare(
       loginDTO.password,
@@ -38,9 +42,15 @@ export class AuthService {
     if (passwordMatched) {
       const payload: PayloadType = { userId: user.userId, email: user.email, role: user.role};
 
-      return {
-        accessToken: this.jwtService.sign(payload),
+      const jwtToken = await this.jwtService.sign(payload);
+      const cookieOptions: CookieOptions = {
+        httpOnly: true,
+        sameSite: 'none',
+        maxAge: 24 * 60 * 60 * 100,
+        // secure: true, // Yêu cầu kết nối bảo mật (HTTPS)
       };
+      res.cookie('jwt', jwtToken, cookieOptions);
+      res.json({ accessToken: jwtToken });
     } else {
       throw new UnauthorizedException("Password does not match");
     }
