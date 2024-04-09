@@ -2,7 +2,7 @@ import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/co
 import { CreateUserDto, UpdateUserDto } from './dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 
 @Injectable()
@@ -11,6 +11,14 @@ export class UsersService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
+
+  async findOne(data: Partial<User>): Promise<User> {
+    const user = await this.userRepository.findOneBy({ email: data.email});
+    if (!user) {
+      throw new UnauthorizedException('Cound not find user');
+    }
+    return user;
+  }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
@@ -33,19 +41,16 @@ export class UsersService {
     return this.userRepository.find();
   }
 
-  async findOne(data: Partial<User>): Promise<User> {
-    const user = await this.userRepository.findOneBy({ email: data.email});
-    if (!user) {
-      throw new UnauthorizedException('Cound not find user');
-    }
-    return user;
+  update(id: number, updateUserDto: UpdateUserDto): Promise<UpdateResult> {
+    return this.userRepository
+      .createQueryBuilder()
+      .update()
+      .set(updateUserDto)
+      .where("userId = :id", { id })
+      .execute();
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  remove(id: number): Promise<DeleteResult> {
+    return this.userRepository.delete(id);
   }
 }
