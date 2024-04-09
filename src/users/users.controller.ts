@@ -2,12 +2,19 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@n
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto } from './dto';
 import { JwtAuthGuard, RolesGuard } from 'src/auth/guard';
-import { Roles } from 'src/auth/decorator';
+import { GetUser, Roles } from 'src/auth/decorator';
 import { UserRole } from 'src/shared/enums';
+import { PayloadType } from 'src/auth/types';
 
 @Controller('users')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Get('me')
+  getMe(@GetUser('') user: PayloadType) {
+      return user;
+  }
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
@@ -15,7 +22,6 @@ export class UsersController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   findAll() {
     return this.usersService.findAll();
