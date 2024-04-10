@@ -7,6 +7,7 @@ import { User } from './users/entities';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { EmployeesModule } from './employees/employees.module';
+import { Employee } from './employees/entities';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { EmployeesModule } from './employees/employees.module';
         port: Number(config.get<string>('DATABASE_PORT')),
         username: config.get<string>('DATABASE_USERNAME'),
         password: config.get<string>('DATABASE_PASSWORD'),
-        entities: [User],
+        entities: [User, Employee],
         synchronize: true,
       }),
     }),

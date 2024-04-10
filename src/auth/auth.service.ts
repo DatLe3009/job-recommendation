@@ -8,11 +8,14 @@ import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { PayloadType } from './types';
 import { CookieOptions, Response } from 'express';
+import { EmployeesService } from 'src/employees/employees.service';
+import { CreateEmployeeDto } from 'src/employees/dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UsersService,
+    private employeeService: EmployeesService,
     private jwtService: JwtService,
   ) {}
   async signup(signupDTO: SignupDTO): Promise<User> {
@@ -26,8 +29,17 @@ export class AuthService {
     }
 
     delete signupDTO.confirmPassword;
+
     const createUserDto: CreateUserDto = signupDTO;
-    return this.userService.create(createUserDto);
+    const user = await this.userService.create(createUserDto);
+    
+    const createEmployeeDto: CreateEmployeeDto = {userId: user.userId};
+
+    if (role === UserRole.EMPLOYEE) {
+      await this.employeeService.create(createEmployeeDto);
+    }
+
+    return user;
   }
 
   async login( 
