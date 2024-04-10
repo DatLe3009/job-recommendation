@@ -3,10 +3,13 @@ import { CreateEmployeeDto, UpdateEmployeeDto} from './dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Employee } from './entities';
 import { Repository } from 'typeorm';
+import { UpdateUserDto } from 'src/users/dto';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class EmployeesService {
   constructor(
+    private userService: UsersService,
     @InjectRepository(Employee)
     private employeeRepository: Repository<Employee>,
   ) {}
@@ -25,8 +28,18 @@ export class EmployeesService {
     return `This action returns a #${id} employee`;
   }
 
-  update(id: number, updateEmployeeDto: UpdateEmployeeDto) {
-    return `This action updates a #${id} employee`;
+  async update(id: number, updateEmployeeDto: UpdateEmployeeDto) {
+    let saveEmployee;
+    if (updateEmployeeDto?.isMarried) {
+      saveEmployee = await this.employeeRepository.update(id, {isMarried: updateEmployeeDto.isMarried});
+      delete updateEmployeeDto.isMarried;
+    }
+    let updateUserDto: UpdateUserDto = updateEmployeeDto;
+    const saveUser = await this.userService.update(id, updateUserDto);
+    return {
+      saveEmployee,
+      saveUser
+    };
   }
 
   remove(id: number) {
