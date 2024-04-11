@@ -11,11 +11,11 @@ export class AuthController {
 
   @Post('signup')
   async signup(@Body() signupDTO: SignupDTO): Promise<ApiResponse<User>> {
-    const newUser = await this.authService.signup(signupDTO);
+    const data = await this.authService.signup(signupDTO);
     return {
       message: 'Signup successful',
       statusCode: 201,
-      data: newUser
+      data: data
     }
   }
 

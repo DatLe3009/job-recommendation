@@ -4,6 +4,8 @@ import { UpdateEmployeeDto } from './dto';
 import { GetUser, Roles } from 'src/auth/decorator';
 import { JwtAuthGuard, RolesGuard } from 'src/auth/guard';
 import { UserRole } from 'src/shared/enums';
+import { ApiResponse } from 'src/shared/interfaces';
+
 
 @Controller('employees')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -22,11 +24,16 @@ export class EmployeesController {
 
   @Patch('me')
   @Roles(UserRole.EMPLOYEE)
-  update(
+  async update(
     @GetUser('userId') id: number, 
     @Body() updateEmployeeDto: UpdateEmployeeDto
-  ) {
-    return this.employeesService.update(id, updateEmployeeDto);
+  ): Promise<ApiResponse<any>> {
+    const data = await this.employeesService.update(id, updateEmployeeDto);
+    return {
+      message: 'update employee successfull',
+      statusCode: 200,
+      data: data
+    }
   }
 
   @Delete(':id')

@@ -30,7 +30,7 @@ export class EmployeesService {
 
   async update(id: number, updateEmployeeDto: UpdateEmployeeDto) {
     let saveEmployee;
-    if (updateEmployeeDto?.isMarried) {
+    if ('isMarried' in updateEmployeeDto) {
       saveEmployee = await this.employeeRepository.update(id, {isMarried: updateEmployeeDto.isMarried});
       delete updateEmployeeDto.isMarried;
     }
