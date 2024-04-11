@@ -3,14 +3,20 @@ import { AuthService } from './auth.service';
 import { LoginDTO, SignupDTO } from './dto';
 import { User } from 'src/users/entities';
 import { Response } from 'express';
+import { ApiResponse } from 'src/shared/interfaces';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('signup')
-  signup(@Body() signupDTO: SignupDTO): Promise<User> {
-    return this.authService.signup(signupDTO);
+  async signup(@Body() signupDTO: SignupDTO): Promise<ApiResponse<User>> {
+    const newUser = await this.authService.signup(signupDTO);
+    return {
+      message: 'Signup successful',
+      statusCode: 201,
+      data: newUser
+    }
   }
 
   @HttpCode(HttpStatus.OK)
