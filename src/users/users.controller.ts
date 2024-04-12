@@ -5,8 +5,9 @@ import { JwtAuthGuard, RolesGuard } from 'src/auth/guard';
 import { GetUser, Roles } from 'src/auth/decorator';
 import { UserRole } from 'src/shared/enums';
 import { PayloadType } from 'src/auth/types';
-import { DeleteResult, UpdateResult } from 'typeorm';
+import { DeleteResult } from 'typeorm';
 import { User } from './entities';
+import { ApiResponse } from 'src/shared/interfaces';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -20,8 +21,13 @@ export class UsersController {
 
   @Post()
   @Roles(UserRole.ADMIN)
-  create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto): Promise<ApiResponse<User>> {
+    const data = await this.usersService.create(createUserDto);
+    return {
+      message: 'User created',
+      statusCode: 201,
+      data: data
+    }
   }
 
   @Get()
@@ -31,8 +37,14 @@ export class UsersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto): Promise<UpdateResult> {
-    return this.usersService.update(+id, updateUserDto);
+  @Roles(UserRole.ADMIN)
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto): Promise<ApiResponse<User>> {
+    const data = await this.usersService.update(+id, updateUserDto);
+    return {
+      message: 'Update user successful',
+      statusCode: 200,
+      data: data
+    }
   }
 
   @Delete(':id')

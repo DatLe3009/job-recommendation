@@ -46,13 +46,13 @@ export class User extends BaseEntity {
     @Column({ nullable: true })
     avatar: string
 
-    @CreateDateColumn()
+    @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
     createdDate: Date
 
-    @UpdateDateColumn()
+    @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
     updatedDate: Date
 
     @OneToOne(() => Employee,
         (employee) => employee.user)
-    employer: Employee
+    employee: Employee
 }

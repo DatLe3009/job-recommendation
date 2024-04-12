@@ -46,8 +46,10 @@ export class UsersService {
     return this.userRepository.find();
   }
 
-  update(id: number, updateUserDto: UpdateUserDto): Promise<UpdateResult> {
-    return this.userRepository.update(id, updateUserDto);
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    await this.userRepository.update(id, updateUserDto);
+    const user = await this.findById(id);
+    return user;
   }
 
   remove(id: number): Promise<DeleteResult> {

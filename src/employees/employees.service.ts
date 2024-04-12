@@ -29,16 +29,18 @@ export class EmployeesService {
   }
 
   async update(id: number, updateEmployeeDto: UpdateEmployeeDto) {
-    let saveEmployee;
+    const saveEmployee = await this.employeeRepository.findOneBy({userId: id});
     if ('isMarried' in updateEmployeeDto) {
-      saveEmployee = await this.employeeRepository.update(id, {isMarried: updateEmployeeDto.isMarried});
+      saveEmployee.isMarried = updateEmployeeDto.isMarried;
+      await saveEmployee.save();
       delete updateEmployeeDto.isMarried;
     }
+
     let updateUserDto: UpdateUserDto = updateEmployeeDto;
     const saveUser = await this.userService.update(id, updateUserDto);
     return {
-      saveEmployee,
-      saveUser
+      ...saveUser,
+      ...saveEmployee
     };
   }
 

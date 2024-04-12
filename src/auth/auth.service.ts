@@ -9,7 +9,6 @@ import { JwtService } from '@nestjs/jwt';
 import { PayloadType } from './types';
 import { CookieOptions, Response } from 'express';
 import { EmployeesService } from 'src/employees/employees.service';
-import { CreateEmployeeDto } from 'src/employees/dto';
 
 @Injectable()
 export class AuthService {
@@ -29,14 +28,11 @@ export class AuthService {
     }
 
     delete signupDTO.confirmPassword;
-
     const createUserDto: CreateUserDto = signupDTO;
     const user = await this.userService.create(createUserDto);
     
-    const createEmployeeDto: CreateEmployeeDto = {userId: user.userId};
-
     if (role === UserRole.EMPLOYEE) {
-      await this.employeeService.create(createEmployeeDto);
+      await this.employeeService.create({userId: user.userId});
     }
 
     return user;
