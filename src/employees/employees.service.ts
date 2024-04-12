@@ -24,8 +24,13 @@ export class EmployeesService {
     return `This action returns all employees`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} employee`;
+  async getProfile(id: number) {
+    const user = await this.userService.findById(id);
+    const employee = await this.employeeRepository.findOneBy({userId: id})
+    return {
+      ...user,
+      ...employee,
+    };
   }
 
   async update(id: number, updateEmployeeDto: UpdateEmployeeDto) {

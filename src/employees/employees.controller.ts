@@ -17,9 +17,17 @@ export class EmployeesController {
     return this.employeesService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.employeesService.findOne(+id);
+  @Get('me')
+  @Roles(UserRole.EMPLOYEE)
+  async getProfile(
+    @GetUser('userId') id: number
+  ): Promise<ApiResponse<any>> {
+    const data = await this.employeesService.getProfile(id);
+    return {
+      message: 'get your profile successfully',
+      statusCode: 200,
+      data: data
+    }
   }
 
   @Patch('me')
