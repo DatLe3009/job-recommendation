@@ -41,7 +41,7 @@ export class AuthService {
   async login( 
     loginDTO: LoginDTO,
     res: Response
-  ) {
+  ): Promise<{ accessToken: string }> {
     const user = await this.userService.findOne(loginDTO); // 1.
     const passwordMatched = await bcrypt.compare(
       loginDTO.password,
@@ -50,7 +50,7 @@ export class AuthService {
     if (passwordMatched) {
       const payload: PayloadType = { userId: user.userId, email: user.email, role: user.role};
 
-      const jwtToken = await this.jwtService.sign(payload);
+      const jwtToken = this.jwtService.sign(payload);
       const cookieOptions: CookieOptions = {
         httpOnly: true,
         sameSite: 'none',
@@ -58,7 +58,7 @@ export class AuthService {
         // secure: true, // Yêu cầu kết nối bảo mật (HTTPS)
       };
       res.cookie('jwt', jwtToken, cookieOptions);
-      res.json({ accessToken: jwtToken });
+      return { accessToken: jwtToken };
     } else {
       throw new UnauthorizedException("Password does not match");
     }

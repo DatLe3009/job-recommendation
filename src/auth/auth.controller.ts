@@ -21,16 +21,24 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  login(
+  async login(
     @Body() loginDTO: LoginDTO,
     @Res() res: Response
   ) {
-    return this.authService.login(loginDTO, res);
+    const data = await this.authService.login(loginDTO, res);
+    res.json({
+      message: 'Login successful',
+      statusCode: 200,
+      data: data
+    });
   }
 
   @Get('logout')
   logout(@Res() res: Response) {
     res.clearCookie('jwt', { httpOnly: true, sameSite: 'none', secure: true });
-    res.sendStatus(204);
+    res.json({
+      message: 'Logout successful',
+      statusCode: 204,
+    });
   }
 }
