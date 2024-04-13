@@ -24,7 +24,9 @@ export class AllExceptionFilter extends BaseExceptionFilter {
         if (exception instanceof HttpException) {
             const responseObject = exception.getResponse() as CustomResponse;
             if (responseObject?.message) myResponseObj.message = responseObject.message;
-            if (responseObject?.error) myResponseObj.error = responseObject.error;
+            if (responseObject?.error) {
+                myResponseObj.error = responseObject.error;
+            } else delete myResponseObj.error;
             myResponseObj.statusCode = exception.getStatus();
         } else if (exception instanceof Error) {
             myResponseObj.message = exception.message
