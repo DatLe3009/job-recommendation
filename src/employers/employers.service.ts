@@ -25,8 +25,10 @@ export class EmployersService {
     return `This action returns a #${id} employer`;
   }
 
-  update(id: number, updateEmployerDto: UpdateEmployerDto) {
-    return `This action updates a #${id} employer`;
+  async update(id: number, updateEmployerDto: UpdateEmployerDto): Promise<Employer> {
+    await this.employerRepository.update(id, updateEmployerDto);
+    const employer = this.employerRepository.findOneBy({userId: id});
+    return employer;
   }
 
   remove(id: number) {
