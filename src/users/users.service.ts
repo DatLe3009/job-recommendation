@@ -14,7 +14,12 @@ export class UsersService {
   ) {}
 
   async findOne(data: LoginDTO): Promise<User> {
-    const user = await this.userRepository.findOneBy({ email: data.email});
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .select('user')
+      .addSelect('user.password')
+      .where('user.email = :email', {email: data.email})
+      .getOne()
     if (!user) {
       throw new UnauthorizedException('Cound not find user');
     }
