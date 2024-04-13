@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { EmployersService } from './employers.service';
 import { CreateEmployerDto, UpdateEmployerDto } from './dto';
 import { JwtAuthGuard, RolesGuard } from 'src/auth/guard';
@@ -18,8 +18,15 @@ export class EmployersController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.employersService.findOne(+id);
+  async findOne(
+    @Param('id', ParseIntPipe) id: number
+  ): Promise<ApiResponse<Employer>> {
+    const data = await this.employersService.findOne(id);
+    return {
+      message: 'get company successful',
+      statusCode: 200,
+      data: data
+    }
   }
 
   @Patch('me')
