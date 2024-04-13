@@ -15,8 +15,26 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get('me')
-  getMe(@GetUser('') user: PayloadType) {
-      return user;
+  async getMe(@GetUser('userId') id: number): Promise<ApiResponse<User>> {
+      const data = await this.usersService.findById(id);
+      return {
+        message: 'get my profile successful',
+        statusCode: 200,
+        data: data
+      }
+  }
+
+  @Patch('me')
+  async editMe(
+    @GetUser('userId') id: number,
+    @Body() updateUserDto: UpdateUserDto
+  ): Promise<ApiResponse<User>> {
+    const data = await this.usersService.update(id, updateUserDto);
+    return {
+      message: 'Update my profile successful',
+      statusCode: 200,
+      data: data
+    }
   }
 
   @Post()
