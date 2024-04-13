@@ -9,12 +9,14 @@ import { JwtService } from '@nestjs/jwt';
 import { PayloadType } from './types';
 import { CookieOptions, Response } from 'express';
 import { EmployeesService } from 'src/employees/employees.service';
+import { EmployersService } from 'src/employers/employers.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UsersService,
     private employeeService: EmployeesService,
+    private employerService: EmployersService,
     private jwtService: JwtService,
   ) {}
   async signup(signupDTO: SignupDTO): Promise<User> {
@@ -33,6 +35,9 @@ export class AuthService {
     
     if (role === UserRole.EMPLOYEE) {
       await this.employeeService.create({userId: user.userId});
+    }
+    if (role === UserRole.EMPLOYER) {
+      await this.employerService.create({userId: user.userId});
     }
 
     return user;
