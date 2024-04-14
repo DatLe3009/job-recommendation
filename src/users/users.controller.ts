@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, DefaultValuePipe, ParseIntPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto } from './dto';
 import { JwtAuthGuard, RolesGuard } from 'src/auth/guard';
@@ -8,6 +8,7 @@ import { PayloadType } from 'src/auth/types';
 import { DeleteResult } from 'typeorm';
 import { User } from './entities';
 import { ApiResponse } from 'src/shared/interfaces';
+import { Pagination } from 'nestjs-typeorm-paginate';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -50,8 +51,22 @@ export class UsersController {
 
   @Get()
   @Roles(UserRole.ADMIN)
-  findAll(): Promise<User[]> {
-    return this.usersService.findAll();
+  async findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe)
+    page: number = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe)
+    limit: number = 10,
+  ): Promise<ApiResponse<Pagination<User>>> {
+    limit = limit > 100 ? 100 : limit;
+    const data = await this.usersService.paginate({
+      page,
+      limit,
+    });
+    return {
+      message: 'find all users successfully',
+      statusCode: 200,
+      data: data
+    }
   }
 
   @Patch(':id')
