@@ -1,5 +1,5 @@
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { CreateUserDto, UpdateUserDto } from './dto';
+import { CreateUserDto, UpdateUserDto, UserQueryDto } from './dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
@@ -58,12 +58,25 @@ export class UsersService {
     return this.userRepository.delete(id);
   }
 
-  async paginate(options: IPaginationOptions): Promise<Pagination<User>>{
+  async findAll(options: IPaginationOptions, query: UserQueryDto): Promise<Pagination<User>>{
     // TODO: implement query buider
-    const query = this.userRepository
+    const queryBuilder = this.userRepository
       .createQueryBuilder('user')
-      .orderBy('user.userId', 'ASC')
 
-    return paginate<User>(query, options);
+    const { role, name, address, sex } = query;
+    if (role) {
+      queryBuilder.andWhere('user.role = :role', {role})
+    }
+    if (name) {
+      queryBuilder.andWhere('user.name LIKE :name', {name: `%${name}%`})
+    }
+    if (address) {
+      queryBuilder.andWhere('user.address LIKE :address', {address: `%${address}%`})
+    }
+    if (sex) {
+      queryBuilder.andWhere('user.sex = :sex', {sex})
+    }
+
+    return paginate<User>(queryBuilder, options);
   }
 }
