@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto, UserQueryDto } from './dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities';
@@ -54,8 +54,10 @@ export class UsersService {
     return user;
   }
 
-  remove(id: number): Promise<DeleteResult> {
-    return this.userRepository.delete(id);
+  async remove(id: number): Promise<DeleteResult> {
+    const DeleteResult = await this.userRepository.delete(id);
+    if (DeleteResult.affected == 0) throw new NotFoundException('User not found');
+    return DeleteResult;
   }
 
   async findAll(options: IPaginationOptions, query: UserQueryDto): Promise<Pagination<User>>{

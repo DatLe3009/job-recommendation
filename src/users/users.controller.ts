@@ -16,7 +16,9 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get('me')
-  async getMe(@GetUser('userId') id: number): Promise<ApiResponse<User>> {
+  async getMe(
+    @GetUser('userId') id: number
+  ): Promise<ApiResponse<User>> {
       const data = await this.usersService.findById(id);
       return {
         message: 'get my profile successful',
@@ -40,7 +42,9 @@ export class UsersController {
 
   @Post()
   @Roles(UserRole.ADMIN)
-  async create(@Body() createUserDto: CreateUserDto): Promise<ApiResponse<User>> {
+  async create(
+    @Body() createUserDto: CreateUserDto
+  ): Promise<ApiResponse<User>> {
     const data = await this.usersService.create(createUserDto);
     return {
       message: 'User created',
@@ -73,8 +77,11 @@ export class UsersController {
 
   @Patch(':id')
   @Roles(UserRole.ADMIN)
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto): Promise<ApiResponse<User>> {
-    const data = await this.usersService.update(+id, updateUserDto);
+  async update(
+    @Param('id', ParseIntPipe) id: number, 
+    @Body() updateUserDto: UpdateUserDto
+  ): Promise<ApiResponse<User>> {
+    const data = await this.usersService.update(id, updateUserDto);
     return {
       message: 'Update user successful',
       statusCode: 200,
@@ -84,7 +91,14 @@ export class UsersController {
 
   @Delete(':id')
   @Roles(UserRole.ADMIN)
-  remove(@Param('id') id: string): Promise<DeleteResult> {
-    return this.usersService.remove(+id);
+  async remove(
+    @Param('id', ParseIntPipe) id: number
+  ): Promise<ApiResponse<DeleteResult>> {
+    const data = await this.usersService.remove(id);
+    return {
+      message: 'User removed successfully',
+      statusCode: 200,
+      data: data
+    }
   }
 }
