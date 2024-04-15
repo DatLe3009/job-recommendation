@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEmployeeDto, UpdateEmployeeDto} from './dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Employee } from './entities';
@@ -26,7 +26,10 @@ export class EmployeesService {
 
   async getProfile(id: number) {
     const user = await this.userService.findOne(id);
-    const employee = await this.employeeRepository.findOneBy({userId: id})
+    const employee = await this.employeeRepository.findOneBy({userId: id});
+    if (!employee) {
+      throw new NotFoundException('Employee not found');
+    }
     return {
       ...user,
       ...employee,
