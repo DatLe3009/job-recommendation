@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateEmployerDto, UpdateEmployerDto } from './dto';
+import { CreateEmployerDto, EmployerQueryDto, UpdateEmployerDto } from './dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Employer } from './entities';
 import { Repository } from 'typeorm';
+import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class EmployersService {
@@ -17,8 +18,23 @@ export class EmployersService {
     return employer;
   }
 
-  findAll() {
-    return `This action returns all employers`;
+  async findAll(options: IPaginationOptions, query: EmployerQueryDto): Promise<Pagination<Employer>> {
+    // TODO: implement query buider
+    const queryBuilder = this.employerRepository
+      .createQueryBuilder('employer')
+
+    const { companyName, companyLocation, careerField } = query;
+    if (companyName) {
+      queryBuilder.andWhere('employer.companyName LIKE :companyName', {companyName: `%${companyName}%`});
+    }
+    if (companyLocation) {
+      queryBuilder.andWhere('employer.companyLocation LIKE :companyLocation', {companyLocation: `%${companyLocation}%`});
+    }
+    if (careerField) {
+      queryBuilder.andWhere('employer.careerField = :careerField', {careerField});
+    }
+
+    return paginate<Employer>(queryBuilder, options);
   }
 
   async findOne(id: number): Promise<Employer> {
