@@ -14,7 +14,7 @@ export class EmployersService {
 
   async create(createEmployerDto: CreateEmployerDto): Promise<Employer> {
     const newEmployer = this.employerRepository.create(createEmployerDto);
-    const employer = this.employerRepository.save(newEmployer);
+    const employer = await this.employerRepository.save(newEmployer);
     return employer;
   }
 
@@ -47,7 +47,7 @@ export class EmployersService {
 
   async update(id: number, updateEmployerDto: UpdateEmployerDto): Promise<Employer> {
     await this.employerRepository.update(id, updateEmployerDto);
-    const employer = this.employerRepository.findOneBy({userId: id});
+    const employer = await this.employerRepository.findOneBy({userId: id});
     return employer;
   }
 
