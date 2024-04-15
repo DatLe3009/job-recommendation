@@ -19,7 +19,7 @@ export class UsersController {
   async getMe(
     @GetUser('userId') id: number
   ): Promise<ApiResponse<User>> {
-      const data = await this.usersService.findById(id);
+      const data = await this.usersService.findOne(id);
       return {
         message: 'get my profile successful',
         statusCode: 200,

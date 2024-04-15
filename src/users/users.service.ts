@@ -14,7 +14,7 @@ export class UsersService {
     private userRepository: Repository<User>,
   ) {}
 
-  async findOne(data: LoginDTO): Promise<User> {
+  async findByEmail(data: LoginDTO): Promise<User> {
     const user = await this.userRepository
       .createQueryBuilder('user')
       .select('user')
@@ -27,8 +27,12 @@ export class UsersService {
     return user;
   }
 
-  async findById(id: number): Promise<User> {
-    return this.userRepository.findOneBy({ userId: id });
+  async findOne(id: number): Promise<User> {
+    const user = await this.userRepository.findOneBy({ userId: id });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -50,7 +54,7 @@ export class UsersService {
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     await this.userRepository.update(id, updateUserDto);
-    const user = await this.findById(id);
+    const user = await this.findOne(id);
     return user;
   }
 

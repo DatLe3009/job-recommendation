@@ -25,7 +25,7 @@ export class EmployeesService {
   }
 
   async getProfile(id: number) {
-    const user = await this.userService.findById(id);
+    const user = await this.userService.findOne(id);
     const employee = await this.employeeRepository.findOneBy({userId: id})
     return {
       ...user,
