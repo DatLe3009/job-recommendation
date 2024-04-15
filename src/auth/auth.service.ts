@@ -47,7 +47,7 @@ export class AuthService {
     loginDTO: LoginDTO,
     res: Response
   ): Promise<{ accessToken: string }> {
-    const user = await this.userService.findByEmail(loginDTO); // 1.
+    const user = await this.userService.findByEmail(loginDTO);
     const passwordMatched = await bcrypt.compare(
       loginDTO.password,
       user.password

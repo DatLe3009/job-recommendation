@@ -12,7 +12,7 @@ export class EmployersService {
     private employerRepository: Repository<Employer>,
   ) {}
 
-  async create(createEmployerDto: CreateEmployerDto) {
+  async create(createEmployerDto: CreateEmployerDto): Promise<Employer> {
     const newEmployer = this.employerRepository.create(createEmployerDto);
     const employer = this.employerRepository.save(newEmployer);
     return employer;
