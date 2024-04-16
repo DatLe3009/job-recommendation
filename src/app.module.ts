@@ -10,6 +10,8 @@ import { EmployeesModule } from './employees/employees.module';
 import { Employee } from './employees/entities';
 import { EmployersModule } from './employers/employers.module';
 import { Employer } from './employers/entities';
+import { OnlineProfilesModule } from './online_profiles/online_profiles.module';
+import { OnlineProfile } from './online_profiles/entities';
 
 @Module({
   imports: [
@@ -25,7 +27,7 @@ import { Employer } from './employers/entities';
         port: Number(config.get<string>('DATABASE_PORT')),
         username: config.get<string>('DATABASE_USERNAME'),
         password: config.get<string>('DATABASE_PASSWORD'),
-        entities: [User, Employee, Employer],
+        entities: [User, Employee, Employer, OnlineProfile],
         synchronize: true,
       }),
     }),
@@ -33,6 +35,7 @@ import { Employer } from './employers/entities';
     AuthModule,
     EmployeesModule,
     EmployersModule,
+    OnlineProfilesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
