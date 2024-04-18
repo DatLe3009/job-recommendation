@@ -1,8 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOnlineProfileDto, UpdateOnlineProfileDto } from './dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OnlineProfile } from './entities';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 
 @Injectable()
 export class OnlineProfilesService {
@@ -30,15 +30,22 @@ export class OnlineProfilesService {
     return `This action returns all onlineProfiles`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} onlineProfile`;
+  async findOne(id: number): Promise<OnlineProfile> {
+    const onlineProfile = await this.onlineProfileRepository.findOneBy({userId: id});
+    if (!onlineProfile) {
+      throw new NotFoundException('Online profile not found');
+    }
+    return onlineProfile;
   }
 
-  update(id: number, updateOnlineProfileDto: UpdateOnlineProfileDto) {
-    return `This action updates a #${id} onlineProfile`;
+  async update(id: number, updateOnlineProfileDto: UpdateOnlineProfileDto): Promise<OnlineProfile> {
+    const onlineProfile = await this.findOne(id);
+    Object.assign(onlineProfile, updateOnlineProfileDto);
+    return this.onlineProfileRepository.save(onlineProfile);   
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} onlineProfile`;
+  async remove(id: number): Promise<DeleteResult> {
+    const onlineProfile = await this.findOne(id);
+    return this.onlineProfileRepository.delete({userId: onlineProfile.userId});
   }
 }

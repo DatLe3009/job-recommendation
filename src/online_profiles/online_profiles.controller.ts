@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { OnlineProfilesService } from './online_profiles.service';
 import { CreateOnlineProfileDto, UpdateOnlineProfileDto } from './dto';
 import { ApiResponse } from 'src/shared/interfaces';
@@ -6,6 +6,7 @@ import { OnlineProfile } from './entities';
 import { GetUser, Roles } from 'src/auth/decorator';
 import { JwtAuthGuard, RolesGuard } from 'src/auth/guard';
 import { UserRole } from 'src/shared/enums';
+import { DeleteResult } from 'typeorm';
 
 @Controller('online-profiles')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -36,13 +37,27 @@ export class OnlineProfilesController {
     return this.onlineProfilesService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOnlineProfileDto: UpdateOnlineProfileDto) {
-    return this.onlineProfilesService.update(+id, updateOnlineProfileDto);
+  @Patch('me')
+  async update(
+    @GetUser('userId') id: number, 
+    @Body() updateOnlineProfileDto: UpdateOnlineProfileDto
+  ): Promise<ApiResponse<OnlineProfile>> {
+    const data = await this.onlineProfilesService.update(id, updateOnlineProfileDto);
+    return {
+      message: 'Updated online profile successfully',
+      statusCode: 200,
+      data: data
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.onlineProfilesService.remove(+id);
+  @Roles(UserRole.ADMIN)
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<ApiResponse<DeleteResult>> {
+    const data = await this.onlineProfilesService.remove(id);
+    return {
+      message: `Removed online profile has id ${id} successfully`,
+      statusCode: 200,
+      data: data 
+    }
   }
 }

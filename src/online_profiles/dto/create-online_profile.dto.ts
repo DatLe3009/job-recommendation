@@ -44,7 +44,7 @@ export class CreateOnlineProfileDto {
 
     @IsString()
     @IsOptional()
-    skills: string
+    skills?: string
    
     @IsBoolean()
     @IsOptional()
