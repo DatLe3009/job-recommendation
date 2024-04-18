@@ -42,7 +42,6 @@ export class AnotherDegreesService {
     return anotherDegree;
   }
 
-
   async create(onlineProfileId: number, createAnotherDegreeDto: CreateAnotherDegreeDto): Promise<AnotherDegree> {
     const onlineProfile = await this.onlineProfileService.findOne(onlineProfileId);
 
