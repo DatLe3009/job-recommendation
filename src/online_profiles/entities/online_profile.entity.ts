@@ -7,8 +7,8 @@ import { AnotherDegree } from "src/another_degrees/entities";
 export class OnlineProfile extends BaseEntity {
     @PrimaryColumn()
     userId: number;
-    // general information
-    @Column({ nullable: true })
+
+    @Column()
     jobTitle: string
 
     @Column({
@@ -33,7 +33,7 @@ export class OnlineProfile extends BaseEntity {
     })
     desiredPosition: PositionLevel
 
-    @Column({ nullable: true })
+    @Column()
     desiredSalary: number
 
     @Column({
@@ -43,7 +43,7 @@ export class OnlineProfile extends BaseEntity {
     })
     degree: Degree
 
-    @Column({ nullable: true })
+    @Column()
     workAddress: string
 
     @Column({
@@ -66,19 +66,18 @@ export class OnlineProfile extends BaseEntity {
     @Column({ nullable: true })
     skills: string
 
-    // Other information ------------------------
-    @Column({ nullable: true })
-    view: number
-
-    @Column({ default: false })
-    isHidden: boolean
-
     @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
     createdDate: Date
 
     @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
     updatedDate: Date
-    // Relations ------------------------
+
+    @Column({ default: false })
+    isHidden: boolean
+
+    @Column({ default: 0 })
+    view: number
+
     @OneToOne(() => Employee, {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE'

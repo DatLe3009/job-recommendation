@@ -2,7 +2,7 @@ import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne } from "t
 import { OnlineProfile } from "src/online_profiles/entities"
 
 
-@Entity()
+@Entity('another_degrees')
 export class AnotherDegree extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
