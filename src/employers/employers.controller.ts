@@ -40,7 +40,7 @@ export class EmployersController {
   ): Promise<ApiResponse<Employer>> {
     const data = await this.employersService.findOne(id);
     return {
-      message: 'get company successful',
+      message: 'get company successfully',
       statusCode: 200,
       data: data
     }
@@ -53,7 +53,7 @@ export class EmployersController {
   ): Promise<ApiResponse<Employer>> {
     const data = await this.employersService.findOne(id);
     return {
-      message: 'get company successful',
+      message: 'get company successfully',
       statusCode: 200,
       data: data
     }
@@ -67,7 +67,7 @@ export class EmployersController {
   ): Promise<ApiResponse<Employer>> {
     const data = await this.employersService.update(id, updateEmployerDto);
     return {
-      message: 'Update infomation of the company successful',
+      message: 'Company updated successfully',
       statusCode: 200,
       data: data
     }

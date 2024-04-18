@@ -14,12 +14,10 @@ export class EmployersService {
 
   async create(createEmployerDto: CreateEmployerDto): Promise<Employer> {
     const newEmployer = this.employerRepository.create(createEmployerDto);
-    const employer = await this.employerRepository.save(newEmployer);
-    return employer;
+    return this.employerRepository.save(newEmployer);
   }
 
   async findAll(options: IPaginationOptions, query: EmployerQueryDto): Promise<Pagination<Employer>> {
-    // TODO: implement query buider
     const queryBuilder = this.employerRepository
       .createQueryBuilder('employer')
 
@@ -46,9 +44,9 @@ export class EmployersService {
   }
 
   async update(id: number, updateEmployerDto: UpdateEmployerDto): Promise<Employer> {
-    await this.employerRepository.update(id, updateEmployerDto);
-    const employer = await this.employerRepository.findOneBy({userId: id});
-    return employer;
+    const employer = await this.findOne(id);
+    Object.assign(employer, updateEmployerDto);
+    return this.employerRepository.save(employer);
   }
 
   remove(id: number) {
