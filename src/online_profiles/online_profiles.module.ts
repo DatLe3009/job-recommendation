@@ -10,5 +10,6 @@ import { OnlineProfile } from './entities';
   ],
   controllers: [OnlineProfilesController],
   providers: [OnlineProfilesService],
+  exports : [OnlineProfilesService]
 })
 export class OnlineProfilesModule {}

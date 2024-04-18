@@ -12,6 +12,8 @@ import { EmployersModule } from './employers/employers.module';
 import { Employer } from './employers/entities';
 import { OnlineProfilesModule } from './online_profiles/online_profiles.module';
 import { OnlineProfile } from './online_profiles/entities';
+import { AnotherDegreesModule } from './another_degrees/another_degrees.module';
+import { AnotherDegree } from './another_degrees/entities';
 
 @Module({
   imports: [
@@ -27,7 +29,7 @@ import { OnlineProfile } from './online_profiles/entities';
         port: Number(config.get<string>('DATABASE_PORT')),
         username: config.get<string>('DATABASE_USERNAME'),
         password: config.get<string>('DATABASE_PASSWORD'),
-        entities: [User, Employee, Employer, OnlineProfile],
+        entities: [User, Employee, Employer, OnlineProfile, AnotherDegree],
         synchronize: true,
       }),
     }),
@@ -36,6 +38,7 @@ import { OnlineProfile } from './online_profiles/entities';
     EmployeesModule,
     EmployersModule,
     OnlineProfilesModule,
+    AnotherDegreesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

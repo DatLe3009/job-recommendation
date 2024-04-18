@@ -31,7 +31,10 @@ export class OnlineProfilesService {
   }
 
   async findOne(id: number): Promise<OnlineProfile> {
-    const onlineProfile = await this.onlineProfileRepository.findOneBy({userId: id});
+    const onlineProfile = await this.onlineProfileRepository.findOne({
+      where: {userId: id},
+      relations: ['another_degrees']
+    });
     if (!onlineProfile) {
       throw new NotFoundException('Online profile not found');
     }

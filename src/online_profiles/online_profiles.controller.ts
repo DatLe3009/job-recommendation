@@ -32,9 +32,17 @@ export class OnlineProfilesController {
     return this.onlineProfilesService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.onlineProfilesService.findOne(+id);
+  @Get('me')
+  @Roles(UserRole.EMPLOYEE)
+  async findOne(
+    @GetUser('userId') id: number
+  ): Promise<ApiResponse<OnlineProfile>> {
+    const data = await this.onlineProfilesService.findOne(id);
+    return {
+      message: 'Online profile found',
+      statusCode: 200,
+      data: data
+    }
   }
 
   @Patch('me')

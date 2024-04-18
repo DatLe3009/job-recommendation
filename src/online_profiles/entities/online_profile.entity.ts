@@ -1,6 +1,7 @@
-import { Entity, BaseEntity, PrimaryColumn, Column, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from "typeorm"
+import { Entity, BaseEntity, PrimaryColumn, Column, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm"
 import { Employee } from "src/employees/entities"
 import { Degree, EmploymentType, Experience, PositionLevel, Profession } from "src/shared/enums"
+import { AnotherDegree } from "src/another_degrees/entities";
 
 @Entity('online_profiles')
 export class OnlineProfile extends BaseEntity {
@@ -87,4 +88,7 @@ export class OnlineProfile extends BaseEntity {
         referencedColumnName: 'userId'
     })
     employee: Employee
+
+    @OneToMany(() => AnotherDegree, (anotherdegree) => anotherdegree.online_profile)
+    another_degrees: AnotherDegree[]
 }
