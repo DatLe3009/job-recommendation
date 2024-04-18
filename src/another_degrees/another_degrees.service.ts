@@ -16,8 +16,8 @@ export class AnotherDegreesService {
     @InjectRepository(AnotherDegree)
     private anotherDegreeRepository: Repository<AnotherDegree>,
   ) {}
-  
-  async findOne(id: number) {
+
+  async findOne(id: number): Promise<AnotherDegree> {
     const anotherDegree = await this.anotherDegreeRepository
       .createQueryBuilder('anotherDegree')
       .select(['anotherDegree', 'onlineProfile.userId'])
@@ -30,6 +30,18 @@ export class AnotherDegreesService {
     }
     return anotherDegree;
   }
+
+  async validateOwnershipAndGetResource(
+    onlineProfileId: number, 
+    id: number, 
+  ): Promise<AnotherDegree> {
+    const anotherDegree = await this.findOne(id);
+    if (anotherDegree.online_profile.userId !== onlineProfileId) {
+      throw new ForbiddenException('You do not owner this Degree');
+    }
+    return anotherDegree;
+  }
+
 
   async create(onlineProfileId: number, createAnotherDegreeDto: CreateAnotherDegreeDto): Promise<AnotherDegree> {
     const onlineProfile = await this.onlineProfileService.findOne(onlineProfileId);
@@ -47,10 +59,7 @@ export class AnotherDegreesService {
     id: number, 
     updateAnotherDegreeDto: UpdateAnotherDegreeDto,
   ): Promise<AnotherDegree> {
-    const anotherDegree = await this.findOne(id);
-    if (anotherDegree.online_profile.userId !== onlineProfileId) {
-      throw new ForbiddenException('You do not owner this Degree');
-    }
+    const anotherDegree = await this.validateOwnershipAndGetResource(onlineProfileId, id);
     Object.assign(anotherDegree, updateAnotherDegreeDto);
     return this.anotherDegreeRepository.save(anotherDegree);
   }
@@ -59,10 +68,7 @@ export class AnotherDegreesService {
     onlineProfileId: number, 
     id: number, 
   ): Promise<DeleteResult> {
-    const anotherDegree = await this.findOne(id);
-    if (anotherDegree.online_profile.userId !== onlineProfileId) {
-      throw new ForbiddenException('You do not owner this Degree');
-    }
-    return this.anotherDegreeRepository.delete({id: id});
+    const anotherDegree = await this.validateOwnershipAndGetResource(onlineProfileId, id);
+    return this.anotherDegreeRepository.delete({id: anotherDegree.id});
   }
 }
