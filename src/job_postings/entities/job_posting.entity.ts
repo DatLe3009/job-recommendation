@@ -2,7 +2,7 @@ import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOn
 import { Employer } from "src/employers/entities"
 import { Degree, Sex, EmploymentType, Experience, PositionLevel, ApprovalStatus, Profession } from "src/shared/enums"
 
-@Entity()
+@Entity('job_postings')
 export class JobPosting extends BaseEntity {
     @PrimaryGeneratedColumn()
     postId: number
