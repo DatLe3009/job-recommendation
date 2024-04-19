@@ -1,4 +1,5 @@
-import { IsDateString, IsNotEmpty, IsString } from "class-validator"
+import { Transform } from "class-transformer"
+import { IsDate, IsDateString, IsNotEmpty, IsString, MaxDate } from "class-validator"
 
 export class CreateEducationInformationDto {
     @IsString()
@@ -13,11 +14,15 @@ export class CreateEducationInformationDto {
     @IsNotEmpty()
     degreeName: string
 
-    @IsDateString()
+    @IsDate()
     @IsNotEmpty()
+    @Transform( ({ value }) => value && new Date(value))
+    @MaxDate(new Date())
     startDate: Date
 
-    @IsDateString()
+    @IsDate()
     @IsNotEmpty()
+    @Transform( ({ value }) => value && new Date(value))
+    @MaxDate(new Date())
     endDate: Date
 }
