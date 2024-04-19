@@ -20,7 +20,7 @@ export class CreateWorkExperienceDto {
     @IsOptional()
     @Transform(({value}) => value && new Date(value))
     @MaxDate(new Date())
-    endDate: Date | null
+    endDate?: Date | null
 
     @IsString()
     @IsNotEmpty()

@@ -5,3 +5,4 @@ export * from './employmentType.enum';
 export * from './experience.enum';
 export * from './positionLevel.enum';
 export * from './profession.enum';
+export * from './approvalStatus.enum';

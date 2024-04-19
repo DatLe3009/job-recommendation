@@ -34,9 +34,10 @@ export class EmployersController {
     }
   }
 
-  @Get(':id')
-  async findOne(
-    @Param('id', ParseIntPipe) id: number
+  @Get('me')
+  @Roles(UserRole.EMPLOYER)
+  async getMe(
+    @GetUser('userId') id: number
   ): Promise<ApiResponse<Employer>> {
     const data = await this.employersService.findOne(id);
     return {
@@ -46,10 +47,9 @@ export class EmployersController {
     }
   }
 
-  @Get('me')
-  @Roles(UserRole.EMPLOYER)
-  async getMe(
-    @GetUser('userId') id: number
+  @Get(':id')
+  async findOne(
+    @Param('id', ParseIntPipe) id: number
   ): Promise<ApiResponse<Employer>> {
     const data = await this.employersService.findOne(id);
     return {

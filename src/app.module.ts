@@ -18,6 +18,8 @@ import { EducationInformationsModule } from './education_informations/education_
 import { EducationInformation } from './education_informations/entities';
 import { WorkExperiencesModule } from './work_experiences/work_experiences.module';
 import { WorkExperience } from './work_experiences/entities';
+import { JobPostingsModule } from './job_postings/job_postings.module';
+import { JobPosting } from './job_postings/entities';
 
 @Module({
   imports: [
@@ -33,7 +35,7 @@ import { WorkExperience } from './work_experiences/entities';
         port: Number(config.get<string>('DATABASE_PORT')),
         username: config.get<string>('DATABASE_USERNAME'),
         password: config.get<string>('DATABASE_PASSWORD'),
-        entities: [User, Employee, Employer, OnlineProfile, AnotherDegree, EducationInformation, WorkExperience],
+        entities: [User, Employee, Employer, OnlineProfile, AnotherDegree, EducationInformation, WorkExperience, JobPosting],
         synchronize: true,
       }),
     }),
@@ -45,6 +47,7 @@ import { WorkExperience } from './work_experiences/entities';
     AnotherDegreesModule,
     EducationInformationsModule,
     WorkExperiencesModule,
+    JobPostingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

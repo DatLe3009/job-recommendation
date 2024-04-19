@@ -1,5 +1,6 @@
-import { BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from "typeorm";
+import { BaseEntity, Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
 import { User } from "src/users/entities";
+import { JobPosting } from "src/job_postings/entities";
 
 @Entity('employers')
 export class Employer extends BaseEntity {
@@ -36,4 +37,7 @@ export class Employer extends BaseEntity {
         referencedColumnName: 'userId'
     })
     user: User
+
+    @OneToMany(() => JobPosting, (jobPosting) => jobPosting.employer)
+    job_postings: JobPosting[]
 }
