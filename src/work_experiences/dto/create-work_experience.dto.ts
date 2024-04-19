@@ -1,5 +1,5 @@
 import { Transform } from "class-transformer"
-import { Equals, IsBoolean, IsDate, IsNotEmpty, IsOptional, IsString, MaxDate, ValidateIf } from "class-validator"
+import { IsDate, IsNotEmpty, IsOptional, IsString, MaxDate } from "class-validator"
 
 export class CreateWorkExperienceDto {
     @IsString()
@@ -16,19 +16,13 @@ export class CreateWorkExperienceDto {
     @MaxDate(new Date())
     startDate: Date
 
-    @ValidateIf((o) => o.isDoing !== true)
     @IsDate()
-    @IsNotEmpty()
+    @IsOptional()
     @Transform(({value}) => value && new Date(value))
     @MaxDate(new Date())
-    endDate: Date
-
-    @IsBoolean()
-    @IsOptional()
-    isDoing?: boolean
+    endDate: Date | null
 
     @IsString()
     @IsNotEmpty()
     jobDescription: string
-
 }

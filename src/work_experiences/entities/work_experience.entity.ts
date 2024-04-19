@@ -2,7 +2,6 @@ import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne, BeforeIn
 import { OnlineProfile } from "src/online_profiles/entities"
 import { BadRequestException } from "@nestjs/common"
 
-
 @Entity()
 export class WorkExperience extends BaseEntity {
     @PrimaryGeneratedColumn()
@@ -17,20 +16,22 @@ export class WorkExperience extends BaseEntity {
     @Column({ type: 'date'})
     startDate: Date
 
-    @Column({ type: 'date', nullable: true })
-    endDate: Date
+    @Column({ type: 'date', nullable: true })   // null = (isDoing = true)
+    endDate: Date | null
 
-    @Column({ default: false })
-    isDoing: boolean
-
-    @Column({ type: 'text', nullable: true })
+    @Column({ type: 'text'})
     jobDescription: string
 
     @BeforeInsert()
     @BeforeUpdate()
     checkDates() {
-        if (this.startDate && this.endDate && this.startDate > this.endDate) {
-            throw new BadRequestException('startDate must be before endDate');
+        if (this.startDate && this.endDate) {
+            const startDate = new Date(this.startDate);
+            const endDate = new Date(this.endDate);
+        
+            if (startDate > endDate) {
+              throw new BadRequestException('startDate must be before endDate');
+            }
         }
     }
 

@@ -25,8 +25,13 @@ export class EducationInformation extends BaseEntity {
     @BeforeInsert()
     @BeforeUpdate()
     checkDates() {
-        if (this.startDate && this.endDate && this.startDate > this.endDate) {
-            throw new BadRequestException('startDate must be before endDate');
+        if (this.startDate && this.endDate) {
+            const startDate = new Date(this.startDate);
+            const endDate = new Date(this.endDate);
+        
+            if (startDate > endDate) {
+              throw new BadRequestException('startDate must be before endDate');
+            }
         }
     }
 
