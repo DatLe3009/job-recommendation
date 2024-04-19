@@ -2,6 +2,7 @@ import { Entity, BaseEntity, PrimaryColumn, Column, OneToOne, JoinColumn, Create
 import { Employee } from "src/employees/entities"
 import { Degree, EmploymentType, Experience, PositionLevel, Profession } from "src/shared/enums"
 import { AnotherDegree } from "src/another_degrees/entities";
+import { EducationInformation } from "src/education_informations/entities";
 
 @Entity('online_profiles')
 export class OnlineProfile extends BaseEntity {
@@ -90,4 +91,7 @@ export class OnlineProfile extends BaseEntity {
 
     @OneToMany(() => AnotherDegree, (anotherdegree) => anotherdegree.online_profile)
     another_degrees: AnotherDegree[]
+
+    @OneToMany(() => EducationInformation, (educationinformation) => educationinformation.online_profile)
+    education_informations: EducationInformation[]
 }
