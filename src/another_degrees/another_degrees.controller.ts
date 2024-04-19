@@ -6,7 +6,6 @@ import { ApiResponse } from 'src/shared/interfaces';
 import { AnotherDegree } from './entities';
 import { JwtAuthGuard, RolesGuard } from 'src/auth/guard';
 import { UserRole } from 'src/shared/enums';
-import { DeleteResult } from 'typeorm';
 
 @Controller('another-degrees')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -47,7 +46,7 @@ export class AnotherDegreesController {
   async remove(
     @GetUser('userId') onlineProfileId: number,
     @Param('id', ParseIntPipe) id: number, 
-  ): Promise<ApiResponse<DeleteResult>> {
+  ): Promise<ApiResponse<AnotherDegree>> {
     const data = await this.anotherDegreesService.remove(onlineProfileId, id);
     return {
       message: `Another degree id ${id} deleted successfully`,

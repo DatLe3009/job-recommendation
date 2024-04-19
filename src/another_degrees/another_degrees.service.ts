@@ -1,10 +1,9 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateAnotherDegreeDto } from './dto/create-another_degree.dto';
-import { UpdateAnotherDegreeDto } from './dto/update-another_degree.dto';
+import { CreateAnotherDegreeDto, UpdateAnotherDegreeDto } from './dto';
 import { OnlineProfilesService } from 'src/online_profiles/online_profiles.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AnotherDegree } from './entities';
-import { DeleteResult, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { OnlineProfile } from 'src/online_profiles/entities';
 
 @Injectable()
@@ -66,8 +65,8 @@ export class AnotherDegreesService {
   async remove(
     onlineProfileId: number, 
     id: number, 
-  ): Promise<DeleteResult> {
+  ): Promise<AnotherDegree> {
     const anotherDegree = await this.validateOwnershipAndGetResource(onlineProfileId, id);
-    return this.anotherDegreeRepository.delete({id: anotherDegree.id});
+    return this.anotherDegreeRepository.remove(anotherDegree);
   }
 }
