@@ -16,6 +16,8 @@ import { AnotherDegreesModule } from './another_degrees/another_degrees.module';
 import { AnotherDegree } from './another_degrees/entities';
 import { EducationInformationsModule } from './education_informations/education_informations.module';
 import { EducationInformation } from './education_informations/entities';
+import { WorkExperiencesModule } from './work_experiences/work_experiences.module';
+import { WorkExperience } from './work_experiences/entities';
 
 @Module({
   imports: [
@@ -31,7 +33,7 @@ import { EducationInformation } from './education_informations/entities';
         port: Number(config.get<string>('DATABASE_PORT')),
         username: config.get<string>('DATABASE_USERNAME'),
         password: config.get<string>('DATABASE_PASSWORD'),
-        entities: [User, Employee, Employer, OnlineProfile, AnotherDegree, EducationInformation],
+        entities: [User, Employee, Employer, OnlineProfile, AnotherDegree, EducationInformation, WorkExperience],
         synchronize: true,
       }),
     }),
@@ -42,6 +44,7 @@ import { EducationInformation } from './education_informations/entities';
     OnlineProfilesModule,
     AnotherDegreesModule,
     EducationInformationsModule,
+    WorkExperiencesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
