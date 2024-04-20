@@ -1,15 +1,57 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, Query, DefaultValuePipe } from '@nestjs/common';
 import { JobPostingsService } from './job_postings.service';
-import { CreateJobPostingDto, UpdateJobPostingDto } from './dto';
+import { CreateJobPostingDto, UpdateJobPostingDto, JobPostingQueryDto, AdminUpdateJobPostingDto } from './dto';
 import { JwtAuthGuard, RolesGuard } from 'src/auth/guard';
-import { UserRole } from 'src/shared/enums';
+import { ApprovalStatus, UserRole } from 'src/shared/enums';
 import { GetUser, Roles } from 'src/auth/decorator';
 import { JobPosting } from './entities';
 import { ApiResponse } from 'src/shared/interfaces';
+import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 
 @Controller('job-postings')
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class JobPostingsController {
+  constructor(private readonly jobPostingsService: JobPostingsService) {}
+
+  @Get()
+  async findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe)
+    page: number = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe)
+    limit: number = 10,
+    @Query() query: JobPostingQueryDto,
+  ): Promise<ApiResponse<Pagination<JobPosting>>> {
+    const options: IPaginationOptions = {
+      page,
+      limit: limit > 100 ? 100 : limit,
+    }; 
+    
+    // user only has access to the job postings has been approved
+    Object.assign(query, { status: ApprovalStatus.approved });
+
+    const data = await this.jobPostingsService.findAll(options, query);
+    return {
+      message: 'find all jobs posting successfully',
+      statusCode: 200,
+      data: data
+    }
+  }
+
+  @Get(':id')
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<ApiResponse<JobPosting>> {
+    const data = await this.jobPostingsService.findOnePublicJobPosting(id);
+    return {
+      message: `find Job posting id ${id} successfully`,
+      statusCode: 200,
+      data: data
+    }
+  }
+}
+
+@Controller('employer/job-postings')
+@UseGuards(JwtAuthGuard, RolesGuard)
+export class EmployerJobPostingsController {
   constructor(private readonly jobPostingsService: JobPostingsService) {}
 
   @Post()
@@ -24,16 +66,6 @@ export class JobPostingsController {
       statusCode: 201,
       data: data
     }
-  }
-
-  @Get()
-  findAll() {
-    return this.jobPostingsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.jobPostingsService.findOne(+id);
   }
 
   @Patch(':id')
@@ -64,4 +96,102 @@ export class JobPostingsController {
       data: data
     }
   }
+
+  @Get()
+  @Roles(UserRole.EMPLOYER)
+  async findAllMyJobPostings(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe)
+    page: number = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe)
+    limit: number = 10,
+    @Query() query: JobPostingQueryDto,
+    @GetUser('userId') employerId: number,
+  ): Promise<ApiResponse<Pagination<JobPosting>>> {
+    const options: IPaginationOptions = {
+      page,
+      limit: limit > 100 ? 100 : limit,
+    };    
+
+    // only return job postings if the user owns the job postings
+    Object.assign(query, { employerId: employerId });
+
+    const data = await this.jobPostingsService.findAll(options, query);
+    return {
+      message: 'find all my jobs posting successfully',
+      statusCode: 200,
+      data: data
+    }
+  }
+
+  @Get(':id')
+  @Roles(UserRole.EMPLOYER)
+  async findOneMyJobPosting(
+    @Param('id', ParseIntPipe) id: number,
+    @GetUser('userId') employerId: number,
+  ): Promise<ApiResponse<JobPosting>> {
+    const data = await this.jobPostingsService.validateOwnershipAndGetResource(employerId, id);
+    return {
+      message: `find Job posting id ${id} successfully`,
+      statusCode: 200,
+      data: data
+    }
+  }
 }
+
+@Controller('admin/job-postings')
+@UseGuards(JwtAuthGuard, RolesGuard)
+export class AdminJobPostingsController {
+  constructor(private readonly jobPostingsService: JobPostingsService) {}
+
+  @Get()
+  @Roles(UserRole.ADMIN)
+  async findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe)
+    page: number = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe)
+    limit: number = 10,
+    @Query() query: JobPostingQueryDto,
+  ): Promise<ApiResponse<Pagination<JobPosting>>> {
+    const options: IPaginationOptions = {
+      page,
+      limit: limit > 100 ? 100 : limit,
+    };    
+
+    const data = await this.jobPostingsService.findAll(options, query);
+    return {
+      message: 'find all jobs posting successfully',
+      statusCode: 200,
+      data: data
+    }
+  }
+
+  @Get(':id')
+  @Roles(UserRole.ADMIN)
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<ApiResponse<JobPosting>> {
+    const data = await this.jobPostingsService.findOne(id);
+    return {
+      message: `find Job posting id ${id} successfully`,
+      statusCode: 200,
+      data: data
+    }
+  }
+
+  @Patch(':id')
+  @Roles(UserRole.ADMIN)
+  async update(
+    @Param('id', ParseIntPipe) id: number, 
+    @Body() adminUpdateJobPostingDto: AdminUpdateJobPostingDto
+  ): Promise<ApiResponse<JobPosting>> {
+    const data = await this.jobPostingsService.updateByAdmin(id, adminUpdateJobPostingDto);
+    return {
+      message: `Job posting id ${id} updated successfully`,
+      statusCode: 200,
+      data: data
+    }
+  }
+}
+
+
+
