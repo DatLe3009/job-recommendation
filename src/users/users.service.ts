@@ -1,11 +1,12 @@
-import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto, UserQueryDto } from './dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { Repository } from 'typeorm';
 import { paginate, Pagination, IPaginationOptions } from 'nestjs-typeorm-paginate';
 import * as bcrypt from 'bcryptjs';
 import { LoginDTO } from 'src/auth/dto';
+import { UserRole } from 'src/shared/enums';
 
 @Injectable()
 export class UsersService {
@@ -58,10 +59,12 @@ export class UsersService {
     return user;
   }
 
-  async remove(id: number): Promise<DeleteResult> {
-    const DeleteResult = await this.userRepository.delete(id);
-    if (DeleteResult.affected == 0) throw new NotFoundException('User not found');
-    return DeleteResult;
+  async remove(id: number): Promise<User> {
+    const user = await this.findOne(id);
+    if (user.role === UserRole.ADMIN) {
+      throw new ForbiddenException('Delete admin is not allowed');
+    } 
+    return this.userRepository.remove(user);
   }
 
   async findAll(options: IPaginationOptions, query: UserQueryDto): Promise<Pagination<User>>{

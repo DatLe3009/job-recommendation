@@ -4,8 +4,6 @@ import { CreateUserDto, UpdateUserDto, UserQueryDto } from './dto';
 import { JwtAuthGuard, RolesGuard } from 'src/auth/guard';
 import { GetUser, Roles } from 'src/auth/decorator';
 import { UserRole } from 'src/shared/enums';
-import { PayloadType } from 'src/auth/types';
-import { DeleteResult } from 'typeorm';
 import { User } from './entities';
 import { ApiResponse } from 'src/shared/interfaces';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
@@ -93,7 +91,7 @@ export class UsersController {
   @Roles(UserRole.ADMIN)
   async remove(
     @Param('id', ParseIntPipe) id: number
-  ): Promise<ApiResponse<DeleteResult>> {
+  ): Promise<ApiResponse<User>> {
     const data = await this.usersService.remove(id);
     return {
       message: 'User removed successfully',
