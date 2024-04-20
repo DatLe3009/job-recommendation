@@ -154,6 +154,7 @@ export class AdminJobPostingsController {
   constructor(private readonly jobPostingsService: JobPostingsService) {}
 
   @Get('professions-statistics')
+  @Roles(UserRole.ADMIN)
   async getProfessionsStatistics(
     @Query('status') status?: ApprovalStatus,
   ): Promise<ApiResponse<any>> {
