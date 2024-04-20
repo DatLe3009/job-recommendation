@@ -12,6 +12,16 @@ import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 export class JobPostingsController {
   constructor(private readonly jobPostingsService: JobPostingsService) {}
 
+  @Get('professions-statistics')
+  async getProfessionsStatistics(): Promise<ApiResponse<any>> {
+    const data = await this.jobPostingsService.getProfessionsStatistics(ApprovalStatus.approved);
+    return {
+      message: 'get professions statistics successfully',
+      statusCode: 200,
+      data: data
+    }
+  }
+
   @Get()
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe)
@@ -143,6 +153,18 @@ export class EmployerJobPostingsController {
 export class AdminJobPostingsController {
   constructor(private readonly jobPostingsService: JobPostingsService) {}
 
+  @Get('professions-statistics')
+  async getProfessionsStatistics(
+    @Query('status') status?: ApprovalStatus,
+  ): Promise<ApiResponse<any>> {
+    const data = await this.jobPostingsService.getProfessionsStatistics(status);
+    return {
+      message: 'get professions statistics successfully',
+      statusCode: 200,
+      data: data
+    }
+  }
+
   @Get()
   @Roles(UserRole.ADMIN)
   async findAll(
@@ -168,9 +190,9 @@ export class AdminJobPostingsController {
   @Get(':id')
   @Roles(UserRole.ADMIN)
   async findOne(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
   ): Promise<ApiResponse<JobPosting>> {
-    const data = await this.jobPostingsService.findOne(id);
+    const data = await this.jobPostingsService.findOne(+id);
     return {
       message: `find Job posting id ${id} successfully`,
       statusCode: 200,
@@ -191,6 +213,7 @@ export class AdminJobPostingsController {
       data: data
     }
   }
+
 }
 
 

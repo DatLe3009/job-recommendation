@@ -6,7 +6,7 @@ import { Brackets, Repository } from 'typeorm';
 import { Employer } from 'src/employers/entities';
 import { EmployersService } from 'src/employers/employers.service';
 import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
-import { ApprovalStatus } from 'src/shared/enums';
+import { ApprovalStatus, Profession } from 'src/shared/enums';
 
 
 @Injectable()
@@ -127,5 +127,19 @@ export class JobPostingsService {
     const jobPosting = await this.findOne(id);
     Object.assign(jobPosting, adminUpdateJobPostingDto);
     return this.jobPostingRepository.save(jobPosting);
+  }
+
+  async getProfessionsStatistics(status?: ApprovalStatus) {
+    let query = this.jobPostingRepository
+      .createQueryBuilder('jobPosting')
+      .select(`UNNEST(jobPosting.profession)`, 'profession_value')
+      .addSelect('COUNT(*)', 'count')
+      .groupBy('profession_value')
+
+    if (status) {
+      query = query.where('jobPosting.status = :status', { status })
+    }
+
+    return query.getRawMany();
   }
 }
