@@ -1,6 +1,7 @@
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, CreateDateColumn, ManyToMany, UpdateDateColumn } from "typeorm"
 import { Employer } from "src/employers/entities"
 import { Degree, Sex, EmploymentType, Experience, PositionLevel, ApprovalStatus, Profession } from "src/shared/enums"
+import { Application } from "src/applications/entities"
 
 @Entity('job_postings')
 export class JobPosting extends BaseEntity {
@@ -128,4 +129,7 @@ export class JobPosting extends BaseEntity {
         onUpdate: 'CASCADE' 
     })
     employer: Employer
+
+    @OneToMany(() => Application, (application) => application.jobPosting)
+    applications: Application[]
 } 

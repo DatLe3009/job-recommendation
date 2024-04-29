@@ -22,6 +22,8 @@ import { JobPostingsModule } from './job_postings/job_postings.module';
 import { JobPosting } from './job_postings/entities';
 import { AttachedDocumentsModule } from './attached_documents/attached_documents.module';
 import { AttachedDocument } from './attached_documents/entities';
+import { ApplicationsModule } from './applications/applications.module';
+import { Application } from './applications/entities';
 
 @Module({
   imports: [
@@ -37,7 +39,7 @@ import { AttachedDocument } from './attached_documents/entities';
         port: Number(config.get<string>('DATABASE_PORT')),
         username: config.get<string>('DATABASE_USERNAME'),
         password: config.get<string>('DATABASE_PASSWORD'),
-        entities: [User, Employee, Employer, OnlineProfile, AnotherDegree, EducationInformation, WorkExperience, JobPosting, AttachedDocument],
+        entities: [User, Employee, Employer, OnlineProfile, AnotherDegree, EducationInformation, WorkExperience, JobPosting, AttachedDocument, Application],
         synchronize: true,
       }),
     }),
@@ -51,6 +53,7 @@ import { AttachedDocument } from './attached_documents/entities';
     WorkExperiencesModule,
     JobPostingsModule,
     AttachedDocumentsModule,
+    ApplicationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

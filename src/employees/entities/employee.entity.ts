@@ -1,5 +1,6 @@
+import { Application } from "src/applications/entities";
 import { User } from "src/users/entities";
-import { BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from "typeorm";
+import { BaseEntity, Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
 
 @Entity('employees')
 export class Employee extends BaseEntity {
@@ -18,4 +19,8 @@ export class Employee extends BaseEntity {
         referencedColumnName: 'userId'
     })
     user: User
+
+    @OneToMany(() => Application, (application) => application.employee)
+    applications: Application[]
+
 }
