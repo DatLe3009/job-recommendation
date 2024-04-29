@@ -7,7 +7,10 @@ import { GetUser, Roles } from 'src/auth/decorator';
 import { JwtAuthGuard, RolesGuard } from 'src/auth/guard';
 import { UserRole } from 'src/shared/enums';
 import { DeleteResult } from 'typeorm';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('Online profiles')
 @Controller('online-profiles')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class OnlineProfilesController {

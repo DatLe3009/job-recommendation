@@ -6,7 +6,10 @@ import { ApiResponse } from 'src/shared/interfaces';
 import { AnotherDegree } from './entities';
 import { JwtAuthGuard, RolesGuard } from 'src/auth/guard';
 import { UserRole } from 'src/shared/enums';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('Another Degrees')
 @Controller('another-degrees')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class AnotherDegreesController {

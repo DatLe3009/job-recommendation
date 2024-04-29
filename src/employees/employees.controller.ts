@@ -5,8 +5,10 @@ import { GetUser, Roles } from 'src/auth/decorator';
 import { JwtAuthGuard, RolesGuard } from 'src/auth/guard';
 import { UserRole } from 'src/shared/enums';
 import { ApiResponse } from 'src/shared/interfaces';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
-
+@ApiBearerAuth()
+@ApiTags('Employees')
 @Controller('employees')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class EmployeesController {

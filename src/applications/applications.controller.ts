@@ -7,7 +7,10 @@ import { GetUser, Roles } from 'src/auth/decorator';
 import { UserRole } from 'src/shared/enums';
 import { ApiResponse } from 'src/shared/interfaces';
 import { Application } from './entities';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('Applications')
 @Controller('applications')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ApplicationsController {

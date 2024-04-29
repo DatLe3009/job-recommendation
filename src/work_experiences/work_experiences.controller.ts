@@ -6,7 +6,10 @@ import { ApiResponse } from 'src/shared/interfaces';
 import { WorkExperience } from './entities';
 import { JwtAuthGuard, RolesGuard } from 'src/auth/guard';
 import { UserRole } from 'src/shared/enums';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('Work experiences')
 @Controller('work-experiences')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class WorkExperiencesController {

@@ -7,7 +7,10 @@ import { GetUser, Roles } from 'src/auth/decorator';
 import { JobPosting } from './entities';
 import { ApiResponse } from 'src/shared/interfaces';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('Job Posting')
 @Controller('job-postings')
 export class JobPostingsController {
   constructor(private readonly jobPostingsService: JobPostingsService) {}
@@ -59,6 +62,8 @@ export class JobPostingsController {
   }
 }
 
+@ApiBearerAuth()
+@ApiTags('Job Posting')
 @Controller('employer/job-postings')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class EmployerJobPostingsController {
@@ -148,6 +153,8 @@ export class EmployerJobPostingsController {
   }
 }
 
+@ApiBearerAuth()
+@ApiTags('Job Posting')
 @Controller('admin/job-postings')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class AdminJobPostingsController {

@@ -4,7 +4,10 @@ import { LoginDTO, SignupDTO } from './dto';
 import { User } from 'src/users/entities';
 import { Response } from 'express';
 import { ApiResponse } from 'src/shared/interfaces';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('User auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

@@ -7,7 +7,10 @@ import { UserRole } from 'src/shared/enums';
 import { User } from './entities';
 import { ApiResponse } from 'src/shared/interfaces';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('Users')
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class UsersController {

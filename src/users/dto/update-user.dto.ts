@@ -1,29 +1,36 @@
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { IsDateString, IsEnum, IsMobilePhone, IsOptional, IsString } from "class-validator";
 import { Sex } from 'src/shared/enums';
 
 export class UpdateUserDto {
     @IsString()
     @IsOptional()
-    name?: string;
+    @ApiPropertyOptional()
+    name?: string
     
     @IsDateString()
     @IsOptional()
-    dob?: Date;
+    @ApiPropertyOptional()
+    dob?: Date
 
     @IsString()
     @IsOptional()
-    address?: string;
+    @ApiPropertyOptional()
+    address?: string
 
     @IsMobilePhone()
     @IsOptional()
-    phone?: string;
+    @ApiPropertyOptional()
+    phone?: string
 
     @IsString()
     @IsOptional()
-    avatar?: string;
+    @ApiPropertyOptional()
+    avatar?: string
   
     @IsEnum(Sex)
     @IsOptional()
-    sex?: Sex;
+    @ApiPropertyOptional()
+    sex?: Sex
 }
 

@@ -7,7 +7,10 @@ import { GetUser, Roles } from 'src/auth/decorator';
 import { ApiResponse } from 'src/shared/interfaces';
 import { AttachedDocument } from './entities';
 import { DeleteResult } from 'typeorm';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('Attached Documents')
 @Controller('attached-documents')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class AttachedDocumentsController {
