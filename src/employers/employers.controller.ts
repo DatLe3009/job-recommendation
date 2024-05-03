@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, Query, DefaultValuePipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, Query, DefaultValuePipe, UseInterceptors, UploadedFile, UploadedFiles } from '@nestjs/common';
 import { EmployersService } from './employers.service';
 import { CreateEmployerDto, EmployerQueryDto, UpdateEmployerDto } from './dto';
 import { JwtAuthGuard, RolesGuard } from 'src/auth/guard';
@@ -7,14 +7,19 @@ import { UserRole } from 'src/shared/enums';
 import { ApiResponse } from 'src/shared/interfaces';
 import { Employer } from './entities';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { FirebaseService } from 'src/firebase/firebase.service';
 
 @ApiBearerAuth()
 @ApiTags('Employers')
 @Controller('employers')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class EmployersController {
-  constructor(private readonly employersService: EmployersService) {}
+  constructor(
+    private readonly employersService: EmployersService,
+    private readonly firebaseService: FirebaseService,
+  ) {}
 
   @Get()
   async findAll(
@@ -64,10 +69,27 @@ export class EmployersController {
 
   @Patch('me')
   @Roles(UserRole.EMPLOYER)
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'logo', maxCount: 1 },
+    { name: 'banner', maxCount: 1 },
+  ]))
+  @ApiConsumes('multipart/form-data')
   async update(
     @GetUser('userId') id: number, 
-    @Body() updateEmployerDto: UpdateEmployerDto
+    @Body() updateEmployerDto: UpdateEmployerDto,
+    @UploadedFiles() files: { logo?: Express.Multer.File[], banner?: Express.Multer.File[] }
   ): Promise<ApiResponse<Employer>> {
+    if (files?.logo?.length) {
+      updateEmployerDto.logo = await this.firebaseService.updateFileByUserId(files.logo[0], id, 'logo');
+    } else if (updateEmployerDto?.logo) {
+      delete updateEmployerDto.logo;
+    }
+    if (files?.banner?.length) {
+      updateEmployerDto.banner = await this.firebaseService.updateFileByUserId(files.banner[0], id, 'banner');
+    } else if (updateEmployerDto?.banner) {
+      delete updateEmployerDto.banner;
+    }
+    
     const data = await this.employersService.update(id, updateEmployerDto);
     return {
       message: 'Company updated successfully',
