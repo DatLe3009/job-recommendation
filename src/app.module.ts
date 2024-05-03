@@ -24,6 +24,7 @@ import { AttachedDocumentsModule } from './attached_documents/attached_documents
 import { AttachedDocument } from './attached_documents/entities';
 import { ApplicationsModule } from './applications/applications.module';
 import { Application } from './applications/entities';
+import { FirebaseModule } from './firebase/firebase.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { Application } from './applications/entities';
     JobPostingsModule,
     AttachedDocumentsModule,
     ApplicationsModule,
+    FirebaseModule,
   ],
   controllers: [AppController],
   providers: [AppService],
