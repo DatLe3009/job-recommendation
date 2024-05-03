@@ -23,7 +23,6 @@ export class UpdateUserDto {
     @ApiPropertyOptional()
     phone?: string
 
-    @IsString()
     @IsOptional()
     @ApiPropertyOptional()
     avatar?: string

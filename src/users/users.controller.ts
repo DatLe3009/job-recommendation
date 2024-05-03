@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, DefaultValuePipe, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, DefaultValuePipe, ParseIntPipe, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto, UserQueryDto } from './dto';
 import { JwtAuthGuard, RolesGuard } from 'src/auth/guard';
@@ -7,14 +7,19 @@ import { UserRole } from 'src/shared/enums';
 import { User } from './entities';
 import { ApiResponse } from 'src/shared/interfaces';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FirebaseService } from 'src/firebase/firebase.service';
 
 @ApiBearerAuth()
 @ApiTags('Users')
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly firebaseService: FirebaseService
+  ) {}
 
   @Get('me')
   async getMe(
@@ -29,10 +34,19 @@ export class UsersController {
   }
 
   @Patch('me')
+  @UseInterceptors(FileInterceptor('avatar'))
+  @ApiConsumes('multipart/form-data')
   async editMe(
     @GetUser('userId') id: number,
-    @Body() updateUserDto: UpdateUserDto
+    @Body() updateUserDto: UpdateUserDto,
+    @UploadedFile() file?: Express.Multer.File,
   ): Promise<ApiResponse<User>> {
+    if (file) {
+      updateUserDto.avatar = await this.firebaseService.updateFileByUserId(file, id, 'avatar');
+    } else if (updateUserDto?.avatar) {
+      delete updateUserDto.avatar;
+    }
+
     const data = await this.usersService.update(id, updateUserDto);
     return {
       message: 'Update my profile successful',
