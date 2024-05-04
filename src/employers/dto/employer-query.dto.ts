@@ -1,25 +1,19 @@
-import { ApiProperty } from "@nestjs/swagger"
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger"
 import { IsOptional, IsString } from "class-validator"
 
 export class EmployerQueryDto {
     @IsString()
     @IsOptional()
-    @ApiProperty({
-        nullable: true,
-    })
+    @ApiPropertyOptional()
     companyName?: string
 
     @IsString()
     @IsOptional()
-    @ApiProperty({
-        nullable: true,
-    })
+    @ApiPropertyOptional()
     companyLocation?: string
 
     @IsString()
     @IsOptional()
-    @ApiProperty({
-        nullable: true,
-    })
+    @ApiPropertyOptional()
     careerField?: string
 }
