@@ -24,12 +24,15 @@ export class UpdateUserDto {
     phone?: string
 
     @IsOptional()
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ type: 'string', format: 'binary' })
     avatar?: string
   
     @IsEnum(Sex)
     @IsOptional()
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({
+        type: 'enum',
+        enum: Sex    
+    })
     sex?: Sex
 }
 

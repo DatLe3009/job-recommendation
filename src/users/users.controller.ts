@@ -92,10 +92,19 @@ export class UsersController {
 
   @Patch(':id')
   @Roles(UserRole.ADMIN)
+  @UseInterceptors(FileInterceptor('avatar'))
+  @ApiConsumes('multipart/form-data')
   async update(
     @Param('id', ParseIntPipe) id: number, 
-    @Body() updateUserDto: UpdateUserDto
+    @Body() updateUserDto: UpdateUserDto,
+    @UploadedFile() file?: Express.Multer.File,
   ): Promise<ApiResponse<User>> {
+    if (file) {
+      updateUserDto.avatar = await this.firebaseService.updateFileByUserId(file, id, 'avatar');
+    } else if (updateUserDto?.avatar) {
+      delete updateUserDto.avatar;
+    }
+
     const data = await this.usersService.update(id, updateUserDto);
     return {
       message: 'Update user successful',

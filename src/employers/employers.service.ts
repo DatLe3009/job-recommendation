@@ -47,7 +47,6 @@ export class EmployersService {
   }
 
   async update(id: number, updateEmployerDto: UpdateEmployerDto): Promise<Employer> {
-    console.log(updateEmployerDto);
     const employer = await this.findOne(id);
     Object.assign(employer, updateEmployerDto);
     return this.employerRepository.save(employer);

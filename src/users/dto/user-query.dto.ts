@@ -5,7 +5,10 @@ import { Sex, UserRole } from 'src/shared/enums';
 export class UserQueryDto {
     @IsEnum(UserRole)
     @IsOptional()
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({
+        type: 'enum',
+        enum: UserRole    
+    })
     role?: UserRole;
 
     @IsString()
@@ -20,7 +23,10 @@ export class UserQueryDto {
 
     @IsEnum(Sex)
     @IsOptional()
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({
+        type: 'enum',
+        enum: Sex
+    })
     sex?: Sex;
 }
 

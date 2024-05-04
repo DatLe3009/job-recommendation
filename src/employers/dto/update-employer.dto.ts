@@ -23,11 +23,11 @@ export class UpdateEmployerDto {
     careerField?: string;
 
     @IsOptional()
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ type: 'string', format: 'binary' })
     logo?: string;
 
     @IsOptional()
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ type: 'string', format: 'binary' })
     banner?: string;
 
     @IsString()

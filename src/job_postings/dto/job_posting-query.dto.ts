@@ -15,32 +15,50 @@ export class JobPostingQueryDto {
 
     @IsEnum(Profession)
     @IsOptional()
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({
+        type: "enum",
+        enum: Profession
+    })
     profession?: Profession
 
     @IsEnum(EmploymentType)
     @IsOptional()
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({
+        type: "enum",
+        enum: EmploymentType
+    })
     employmentType?: EmploymentType
 
     @IsEnum(Degree)
     @IsOptional()
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({
+        type: "enum",
+        enum: Degree
+    })
     degree?: Degree
 
     @IsEnum(Experience)
     @IsOptional()
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({
+        type: "enum",
+        enum: Experience
+    })
     experience?: Experience
 
     @IsEnum(PositionLevel)
     @IsOptional()
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({
+        type: "enum",
+        enum: PositionLevel
+    })
     positionLevel?: PositionLevel
 
     @IsEnum(Sex)
     @IsOptional()
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({
+        type: "enum",
+        enum: Sex
+    })
     sex?: Sex
 
     @IsNumberString()
@@ -50,7 +68,10 @@ export class JobPostingQueryDto {
 
     @IsEnum(ApprovalStatus)
     @IsOptional()
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({
+        type: "enum",
+        enum: ApprovalStatus
+    })
     status?: ApprovalStatus
 }
 
